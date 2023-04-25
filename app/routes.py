@@ -2,6 +2,11 @@ from flask import Blueprint, jsonify, abort, make_response
 
 # add moon class!
 
+class Moon:
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name
+
 class Planet:
     def __init__(self, id, name, description, moons):
         self.id = id
@@ -9,8 +14,11 @@ class Planet:
         self.description = description
         self.moons = moons
 
+earth_moons =[Moon(1, "Moon")]
+mars_moons =[Moon(1, "Moon"), Moon(2, "Moon2")]
+
 planets = [
-    Planet(1, "Earth", "Our home planet Earth is a rocky, terrestrial plane", 1),
+    Planet(1, "Earth", "Our home planet Earth is a rocky, terrestrial plane", Moon(1, "Moon")),
     Planet(2, "Mars", "A dusty, cold, desert world with a very thin atmosphere", 2),
     Planet(3, "Pluto", "Pluto is very small, only about half the width of the United States", 5)
 ]
