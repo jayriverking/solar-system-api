@@ -14,13 +14,13 @@ class Planet:
         self.description = description
         self.moons = moons
 
-earth_moons =[Moon(1, "Moon")]
+earth_moons =Moon(1, "Moon")
 mars_moons =[Moon(1, "Moon"), Moon(2, "Moon2")]
 
 planets = [
-    Planet(1, "Earth", "Our home planet Earth is a rocky, terrestrial plane", Moon(1, "Moon")),
-    Planet(2, "Mars", "A dusty, cold, desert world with a very thin atmosphere", 2),
-    Planet(3, "Pluto", "Pluto is very small, only about half the width of the United States", 5)
+    Planet(1, "Earth", "Our home planet Earth is a rocky, terrestrial plane", mars_moons),
+    Planet(2, "Mars", "A dusty, cold, desert world with a very thin atmosphere", mars_moons),
+    Planet(3, "Pluto", "Pluto is very small, only about half the width of the United States", mars_moons)
 ]
 
 def validate_planet(planet_id):
@@ -35,17 +35,31 @@ def validate_planet(planet_id):
     
     abort(make_response({"message: " :f"planet id {planet_id} does not exist"}, 404))
 
+def handle_moons(planet_moons):
+    moons_response = []
+    for moon in planet_moons:
+        moons_response.append({
+            "id" : moon.id,
+            "name": moon.name
+        })
+    
+    return moons_response
+    
+
 planets_bp = Blueprint("planets", __name__, url_prefix="/planets")
 
 @planets_bp.route("", methods=["GET"])
 def handle_planets():
     planets_response = []
     for planet in planets:
+        moons_response = handle_moons(planet.moons)
+
         planets_response.append({
             "id": planet.id,
             "name": planet.name,
             "description": planet.description,
-            "moons": planet.moons
+            #"moons": planet.moons
+            "moons" : moons_response
         })
     return jsonify(planets_response)
 
