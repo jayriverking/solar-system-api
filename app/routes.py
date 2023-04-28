@@ -22,7 +22,7 @@ def make_a_planet():
 def get_all_planets():
     planet_response = []
     planets = Planet.query.all()
-    for planet in plants:
+    for planet in planets:
         planet_response.append({
             "id": planet.id,
             "name": planet.name,
