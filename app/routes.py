@@ -15,14 +15,12 @@ def make_a_planet():
             description =  request_body["description"]
         )
 
-
-
         db.session.add(new_planet)
         db.session.commit()
 
         return make_response(f"Yaaaaay planet {new_planet.name} has been made", 201)
-    except:
-        return make_response("Something is missing", 400)
+    except KeyError as error:
+        abort(make_response(f"{error.__str__()} is missing", 400))
 
 
 @planets_bp.route("", methods=["GET"])
