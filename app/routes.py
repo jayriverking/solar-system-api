@@ -12,13 +12,23 @@ def make_a_planet():
         name = request_body["name"],
         description =  request_body["description"]
     )
-    
+
     db.session.add(new_planet)
     db.session.commit()
 
     return make_response(f"Yaaaaay planet {new_planet.name} has been made", 201)
 
-
+@planets_bp.route("", methods=["GET"])
+def get_all_planets():
+    planet_response = []
+    planets = Planet.query.all()
+    for planet in plants:
+        planet_response.append({
+            "id": planet.id,
+            "name": planet.name,
+            "description": planet.description
+        })
+    return jsonify(planet_response)
 
 # class Moon:
 #     def __init__(self, id, name):
