@@ -69,10 +69,10 @@ def handle_planets():
 
 def handle_planet(planet_id):
     planet = validate_planet(planet_id)
-
+    moons_response = handle_moons(planet.moons)
     return {
             "id": planet.id,
             "name": planet.name,
             "description": planet.description,
-            "moons": planet.moons
+            "moons": moons_response
     }
