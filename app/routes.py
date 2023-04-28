@@ -7,16 +7,23 @@ planets_bp = Blueprint("planets", __name__, url_prefix="/planets")
 
 @planets_bp.route("", methods=["POST"])
 def make_a_planet():
-    request_body = request.get_json()
-    new_planet = Planet(
-        name = request_body["name"],
-        description =  request_body["description"]
-    )
+    try:
+        request_body = request.get_json()
 
-    db.session.add(new_planet)
-    db.session.commit()
+        new_planet = Planet(
+            name = request_body["name"],
+            description =  request_body["description"]
+        )
 
-    return make_response(f"Yaaaaay planet {new_planet.name} has been made", 201)
+
+
+        db.session.add(new_planet)
+        db.session.commit()
+
+        return make_response(f"Yaaaaay planet {new_planet.name} has been made", 201)
+    except:
+        return make_response("Something is missing", 400)
+
 
 @planets_bp.route("", methods=["GET"])
 def get_all_planets():
