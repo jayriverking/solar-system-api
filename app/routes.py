@@ -45,9 +45,10 @@ def get_all_planets():
         planets = Planet.query.filter_by(name=name_query) 
     if  desc_query:
         planets = Planet.query.filter_by(description=desc_query)
+    else:
+        planets = Planet.query.all()
     
     planet_response = []
-    planets = Planet.query.all()
     for planet in planets:
         planet_response.append({
             "id": planet.id,
