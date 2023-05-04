@@ -1,6 +1,40 @@
 from app import db
 from app.models.planet import Planet
+from app.models.moon import Moon
+
 from flask import Blueprint, jsonify, abort, make_response, request
+moons_bp = Blueprint("moons_bp", __name__, url_prefix="/moons")
+
+@moons_bp.route("", methods=["POST"])
+def create_moon():
+
+
+    request_body = request.get_json()
+    new_moon = Moon(
+        name= request_body["name"],
+    )
+
+    db.session.add(new_moon)
+    db.session.commit()
+
+    return make_response(jsonify(f"Moon {new_moon.name} successfully created"), 201)
+
+@moons_bp.route("", methods=["GET"])
+def read_all_moons():
+    
+    moons = Moon.query.all()
+
+    moons_response = []
+    for moon in moons:
+        moons_response.append(
+            {
+                "name": moon.name,
+                "planet": moon.planet
+            }
+        )
+    return jsonify(moons_response)
+
+
 
 planets_bp = Blueprint("planets", __name__, url_prefix="/planets")
 
@@ -31,24 +65,44 @@ def make_a_planet():
         db.session.add(new_planet)
         db.session.commit()
 
-        return make_response(f"Yaaaaay planet {new_planet.name} has been made", 201)
+        return jsonify(f"Yaaaaay planet {new_planet.name} has been made"), 201
     except KeyError as error:
         abort(make_response(f"{error.__str__()} is missing", 400))
-
+    
 
 @planets_bp.route("", methods=["GET"])
 def get_all_planets():
     name_query = request.args.get("name")
     desc_query = request.args.get("description")
 
-    if name_query:
-        planets = Planet.query.filter_by(name=name_query) 
-    if  desc_query:
-        planets = Planet.query.filter_by(description=desc_query)
-    else:
+    query_map = {
+        Planet.query.filter_by(name = name_query): name_query,
+        Planet.query.filter_by(description = desc_query):desc_query
+    }
+    
+
+    
+    #planets = value
+    #if name_query or desc_query:
+    #   planets = Planet.query.filter_by(name=name_query, description = desc_query)
+    #if  desc_query:
+    #   planets = Planet.query.filter_by(description=desc_query)
+    #else:
+    #   planets = Planet.query.all()
+    
+    
+    query_count = 0
+    
+    for key, value in query_map.items():
+        if value:
+            planets = key
+            query_count += 1
+    
+    if query_count == 0:
         planets = Planet.query.all()
     
     planet_response = []
+
     for planet in planets:
         planet_response.append({
             "id": planet.id,
