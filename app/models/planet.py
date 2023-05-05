@@ -6,4 +6,17 @@ class Planet(db.Model):
     description = db.Column(db.String)
     moons = db.relationship("Moon", back_populates="planet")
 
-    
+    @classmethod
+    def from_dict(cls, planet_data):
+        new_planet = Planet(
+            name = planet_data["name"],
+            description = planet_data["description"],
+        )
+        return new_planet
+
+    def to_dict(self):
+        return{
+            "id" : self.id,
+            "name": self.name,
+            "description": self.description
+        }

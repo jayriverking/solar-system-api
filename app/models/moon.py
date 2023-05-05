@@ -6,3 +6,4 @@ class Moon(db.Model):
     planet_id = db.Column(db.Integer, db.ForeignKey('planet.id'))
     planet = db.relationship("Planet", back_populates="moons")
 
+    
