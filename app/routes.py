@@ -3,7 +3,7 @@ from app.models.planet import Planet
 from app.models.moon import Moon
 
 from flask import Blueprint, jsonify, abort, make_response, request
-moons_bp = Blueprint("moons_bp", __name__, url_prefix="/moons")
+moons_bp = Blueprint("moons", __name__, url_prefix="/moons")
 
 @moons_bp.route("", methods=["POST"])
 def create_moon():
@@ -34,10 +34,35 @@ def read_all_moons():
         )
     return jsonify(moons_response)
 
-
-
 planets_bp = Blueprint("planets", __name__, url_prefix="/planets")
 
+
+@planets_bp.route("/<planet_id>/moons", methods = ["POST"])
+def create_moon_by_planet_id(planet_id):
+    planet = validate_model(Planet, planet_id)
+    request_body = request.get_json()
+    new_moon = Moon(
+        name = request_body["name"],
+        planet = planet
+    )
+
+    # add to the database
+    db.session.add(new_moon)
+    db.session.commit()
+
+    return jsonify(f"Moon {new_moon.name} owned by {new_moon.planet.name} was successfully created."), 201
+
+
+@planets_bp.route("/<planet_id>/moons", methods = ["GET"])
+def get_all_moonss_with_planet_id(planet_id):
+    planet = validate_model(Planet, planet_id)
+
+    moons_response = []
+
+    for moon in planet.moons:
+        moons_response.append(moon.to_dict())
+    
+    return jsonify(moons_response), 200
 # validate helper function
 def validate_model(model_class, model_id):
     try:

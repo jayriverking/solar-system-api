@@ -6,4 +6,9 @@ class Moon(db.Model):
     planet_id = db.Column(db.Integer, db.ForeignKey('planet.id'))
     planet = db.relationship("Planet", back_populates="moons")
 
-    
+    def to_dict(self):
+        return{
+            "id" : self.id,
+            "name": self.name,
+            "planet": self.planet.name
+        }
